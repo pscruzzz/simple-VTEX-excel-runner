@@ -49,16 +49,12 @@ async function main(){
   worksheet.columns = inputColums
 
 
-  const responsesArray = await Promise.all(skusArray.map(async eachSKU => {
+  await Promise.all(skusArray.map(async eachSKU => {
     const eachSKUResponseData = await runner(eachSKU)
     return eachSKUResponseData
-  }))
-
-  responsesArray.map(
-    eachResponse =>{
-      populateExcelFile(eachResponse, worksheet)
-    }
-  )
+  })).then(eachResponse =>{
+    eachResponse.map(response => populateExcelFile(response, worksheet))
+  })
 
   await workbook.xlsx.writeFile(`response-data-${+new Date()}.xlsx`);
 
